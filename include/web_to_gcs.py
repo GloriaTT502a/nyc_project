@@ -15,7 +15,7 @@ Pre-reqs:
 # services = ['fhv','green','yellow']
 init_url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/'
 # switch out the bucketname
-BUCKET = os.environ.get("GCP_GCS_BUCKET", "nyc_project")
+BUCKET = os.environ.get("GCP_GCS_BUCKET", "nyc_project_sigma_heuristic")
 
 
 def upload_to_gcs(bucket, object_name, local_file, gcp_conn_id='gcp'):
@@ -37,7 +37,7 @@ def web_to_gcs(year, service, gcp_conn_id='gcp'):
         # sets the month part of the file_name string
         month = '0'+str(i+1)
         month = month[-2:]
-        yearmonth=int(year)*100+i 
+        yearmonth=int(year)*100+i+1 
 
         # csv file_name
         file_name = f"{service}_tripdata_{year}-{month}.csv.gz"
@@ -50,6 +50,16 @@ def web_to_gcs(year, service, gcp_conn_id='gcp'):
 
         # read it back into a parquet file
         df = pd.read_csv(file_name, compression='gzip')
+        df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+        df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+        df['VendorID'] = df['VendorID'].astype('Int64') 
+        df['RatecodeID'] = df['RatecodeID'].astype('Int64') 
+        df['PULocationID'] = df['PULocationID'].astype('Int64') 
+        df['DOLocationID'] = df['DOLocationID'].astype('Int64')
+        df['trip_type'] = df['trip_type'].astype('Int64')
+        df['payment_type'] = df['payment_type'].astype('Int64')
+        df['passenger_count'] = df['passenger_count'].astype('Int64') 
+        df['store_and_fwd_flag'] = df['store_and_fwd_flag'].astype(str)
         df['yearmonth'] = yearmonth
         file_name = file_name.replace('.csv.gz', '.parquet')
         df.to_parquet(file_name, engine='pyarrow')

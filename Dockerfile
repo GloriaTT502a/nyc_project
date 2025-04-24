@@ -10,4 +10,4 @@ RUN python -m venv dbt_venv && source dbt_venv/bin/activate && \
 RUN mkdir -p /tmp/dbt_logs /tmp/dbt_packages
 
 # (Optional) Set GCS bucket environment variable
-ENV GCP_GCS_BUCKET=nyc_project
+ENV GCP_GCS_BUCKET=nyc_project_sigma_heuristic

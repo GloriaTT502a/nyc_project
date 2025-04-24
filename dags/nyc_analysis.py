@@ -17,20 +17,30 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator  # Correct import 
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator 
 
 import os
 
-BUCKET = os.environ.get("GCP_GCS_BUCKET", "nyc_project")
+BUCKET = os.environ.get("GCP_GCS_BUCKET", "nyc_project_sigma_heuristic")
 
 @dag(
     dag_id="nyc_analysis", 
-    start_date=datetime(2025, 4, 21), 
+    start_date=datetime(2025, 4, 23), 
     schedule=None, 
     catchup=False, 
     tags=['nyc_analysis'], 
 ) 
 
 def nyc_analysis(): 
+    create_bucket = GCSCreateBucketOperator(
+        task_id='create_bucket',
+        bucket_name=BUCKET,  
+        project_id='sigma-heuristic-457716-n7',
+        gcp_conn_id='gcp',
+        location='US',  # Match VM zone
+        storage_class='STANDARD',
+    ) 
+
     download_green_taxi_data = PythonOperator(
         task_id='download_green_taxi_data',
         python_callable=web_to_gcs,
@@ -59,34 +69,34 @@ def nyc_analysis():
         source_format='PARQUET',
         gcp_conn_id='gcp',
         write_disposition='WRITE_TRUNCATE', 
+        autodetect=False,
         schema_fields=[
-            {"name": "VendorID", "type": "STRING"},
-            {"name": "lpep_pickup_datetime", "type": "TIMESTAMP"},
-            {"name": "lpep_dropoff_datetime", "type": "TIMESTAMP"},
-            {"name": "store_and_fwd_flag", "type": "STRING"},
-            {"name": "RatecodeID", "type": "STRING"},
-            {"name": "PULocationID", "type": "STRING"},
-            {"name": "DOLocationID", "type": "STRING"},
-            {"name": "passenger_count", "type": "INTEGER"},  # Fixed to INTEGER
-            {"name": "trip_distance", "type": "NUMERIC"},
-            {"name": "fare_amount", "type": "NUMERIC"},
-            {"name": "extra", "type": "NUMERIC"},
-            {"name": "mta_tax", "type": "NUMERIC"},
-            {"name": "tip_amount", "type": "NUMERIC"},
-            {"name": "tolls_amount", "type": "NUMERIC"},
-            {"name": "ehail_fee", "type": "NUMERIC"},
-            {"name": "improvement_surcharge", "type": "NUMERIC"},
-            {"name": "total_amount", "type": "NUMERIC"},
-            {"name": "payment_type", "type": "INTEGER"},
-            {"name": "trip_type", "type": "STRING"},
-            {"name": "congestion_surcharge", "type": "NUMERIC"},
-            {"name": "yearmonth", "type": "INTEGER"},
-        ],
+            {"name": "VendorID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "lpep_pickup_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "lpep_dropoff_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "store_and_fwd_flag", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "RatecodeID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "PULocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "DOLocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "passenger_count", "type": "INTEGER", "mode": "NULLABLE"},  # Fixed to INTEGER
+            {"name": "trip_distance", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "fare_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "extra", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "mta_tax", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "tip_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "tolls_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "ehail_fee", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "improvement_surcharge", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "total_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "payment_type", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "trip_type", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "congestion_surcharge", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "yearmonth", "type": "INTEGER", "mode": "NULLABLE"},
+        ], 
         time_partitioning={
             "type": "DAY",
             "field": "lpep_pickup_datetime",
         },
-        autodetect=False,
     )
 
 nyc_analysis()
