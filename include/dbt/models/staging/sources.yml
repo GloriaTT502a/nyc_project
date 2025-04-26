@@ -1,7 +1,7 @@
 version: 2 
 
 sources: 
-  - name: nyc_project 
+  - name: base 
     database: sigma-heuristic-457716-n7
 
     tables: 

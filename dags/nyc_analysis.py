@@ -47,9 +47,9 @@ def nyc_analysis():
         op_kwargs={'year': '2019', 'service': 'green', 'gcp_conn_id': 'gcp'},
     )
 
-    create_nyc_dataset = BigQueryCreateEmptyDatasetOperator(
-        task_id='create_nyc_dataset',
-        dataset_id='nyc_project',
+    create_base_dataset = BigQueryCreateEmptyDatasetOperator(
+        task_id='create_base_dataset',
+        dataset_id='base',
         gcp_conn_id='gcp',
     )
 

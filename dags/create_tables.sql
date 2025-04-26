@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `sigma-heuristic-457716-n7.nyc_project.raw_green_trips`;
+DROP TABLE IF EXISTS `sigma-heuristic-457716-n7.base.raw_green_trips`;
 
-CREATE TABLE IF NOT EXISTS `sigma-heuristic-457716-n7.nyc_project.raw_green_trips`
+CREATE TABLE IF NOT EXISTS `sigma-heuristic-457716-n7.base.raw_green_trips`
 (
     VendorID INT64 OPTIONS (description = 'A code indicating the LPEP provider that provided the record. 1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.'),
     lpep_pickup_datetime TIMESTAMP OPTIONS (description = 'The date and time when the meter was engaged'),
