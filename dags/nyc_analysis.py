@@ -99,4 +99,10 @@ def nyc_analysis():
         },
     )
 
+    create_staging_dataset = BigQueryCreateEmptyDatasetOperator(
+        task_id='create_staging_dataset',
+        dataset_id='staging',
+        gcp_conn_id='gcp',
+    )
+
 nyc_analysis()

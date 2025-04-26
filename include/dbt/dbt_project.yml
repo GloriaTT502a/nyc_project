@@ -1,6 +1,6 @@
-name: 'retail'
+name: 'nyc_project'
 version: '1.0'
-profile: 'retail'
+profile: 'nyc_project'
 require-dbt-version: [">=1.3.0", "<2.0.0"]
 config-version: 2
 
@@ -11,5 +11,14 @@ log-path: /tmp/dbt_logs
 packages-install-path: /tmp/dbt_packages
 
 models:
-  retail:
-    materialized: table
+  nyc_project:
+      # Applies to all files under models/.../
+      staging:
+          +schema: staging
+          +materialized: view
+      marts: 
+        warehouse: 
+          +schema: staging
+        reporting: 
+          +materialized: table
+

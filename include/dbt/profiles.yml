@@ -1,11 +1,11 @@
-retail:
+nyc_project:
  target: dev
  outputs:
   dev:
     type: bigquery
     method: service-account
     keyfile: /usr/local/airflow/include/gcp/service_account.json
-    project: esoteric-realm-448604-v0
+    project: sigma-heuristic-457716-n7
     dataset: nyc_project
     threads: 1
     timeout_seconds: 300

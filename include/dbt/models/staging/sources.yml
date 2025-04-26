@@ -1,0 +1,10 @@
+version: 2 
+
+sources: 
+  - name: nyc_project 
+    database: sigma-heuristic-457716-n7
+
+    tables: 
+      - name: raw_green_trips 
+        description: Source table for green taxi trips 
+

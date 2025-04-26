@@ -2,7 +2,7 @@ from cosmos.config import ProfileConfig, ProjectConfig
 from pathlib import Path
 
 DBT_CONFIG = ProfileConfig(
-    profile_name='retail',
+    profile_name='nyc',
     target_name='dev',
     profiles_yml_filepath=Path('/usr/local/airflow/include/dbt/profiles.yml')
 )
