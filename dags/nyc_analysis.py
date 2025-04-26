@@ -65,7 +65,7 @@ def nyc_analysis():
         task_id='load_gcs_to_bigquery',
         bucket=BUCKET,
         source_objects=['green/green_tripdata_2019-*.parquet'],
-        destination_project_dataset_table='nyc_project.raw_green_trips',
+        destination_project_dataset_table='base.raw_green_trips',
         source_format='PARQUET',
         gcp_conn_id='gcp',
         write_disposition='WRITE_TRUNCATE', 
