@@ -1,0 +1,8 @@
+version: 2 
+
+model: 
+  - name: green_preprocessing 
+    description: Preprocessing for data quality solution 
+
+  - name: green_validations 
+    description: validations for data quality solution 

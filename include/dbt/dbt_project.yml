@@ -22,3 +22,28 @@ models:
         reporting: 
           +materialized: table
 
+vars:
+  green_warn_rules:
+    - name: pickup_datetime_future
+      condition: "pickup_datetime <= current_timestamp()"
+      description: "Pickup datetime should not be in the future"
+    - name: invalid_fare_amount
+      condition: "fare_amount >= 0"
+      description: "Fare amount should be non-negative"
+    - name: missing_passenger_count
+      condition: "passenger_count IS NOT NULL"
+      description: "Passenger count should not be null"
+    - name: unusual_trip_distance
+      condition: "trip_distance BETWEEN 0 AND 100"
+      description: "Trip distance should be within 0-100 miles"
+
+  green_drop_rules:
+    - name: null_pickup_datetime
+      condition: "pickup_datetime IS NOT NULL"
+      description: "Pickup datetime must not be null"
+    - name: null_dropoff_datetime
+      condition: "dropoff_datetime IS NOT NULL"
+      description: "Dropoff datetime must not be null"
+    - name: negative_total_amount
+      condition: "total_amount > 0"
+      description: "Total amount must be positive"
