@@ -48,6 +48,24 @@ def nyc_analysis():
         op_kwargs={'year': '2019', 'service': 'green', 'gcp_conn_id': 'gcp'},
     )
 
+    download_yellow_taxi_data = PythonOperator(
+        task_id='download_yellow_taxi_data',
+        python_callable=web_to_gcs,
+        op_kwargs={'year': '2019', 'service': 'yellow', 'gcp_conn_id': 'gcp'},
+    )    
+
+    download_fhv_taxi_data = PythonOperator(
+        task_id='download_fhv_taxi_data',
+        python_callable=web_to_gcs,
+        op_kwargs={'year': '2019', 'service': 'fhv', 'gcp_conn_id': 'gcp'},
+    ) 
+
+    download_fhvhv_taxi_data = PythonOperator(
+        task_id='download_fhvhv_taxi_data',
+        python_callable=web_to_gcs,
+        op_kwargs={'year': '2021', 'service': 'fhvhv', 'gcp_conn_id': 'gcp'},
+    ) 
+
     download_zone_data = PythonOperator(
         task_id='download_zone_data',
         python_callable=zone_to_gcs,
@@ -67,9 +85,9 @@ def nyc_analysis():
         use_legacy_sql=False,  # Use standard SQL for BigQuery
     )
 
-        # Task to load CSV from GCS to BigQuery
-    load_gcs_to_bigquery = GCSToBigQueryOperator(
-        task_id='load_gcs_to_bigquery',
+    # Task to load CSV from GCS to BigQuery
+    load_green_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_green_to_bigquery',
         bucket=BUCKET,
         source_objects=['green/green_tripdata_2019-*.parquet'],
         destination_project_dataset_table='base.raw_green_trips',
@@ -106,6 +124,109 @@ def nyc_analysis():
         },
     )
 
+    load_yellow_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_yellow_to_bigquery',
+        bucket=BUCKET,
+        source_objects=['yellow/yellow_tripdata_2019-*.parquet'],
+        destination_project_dataset_table='base.raw_yellow_trips',
+        source_format='PARQUET',
+        gcp_conn_id='gcp',
+        write_disposition='WRITE_TRUNCATE', 
+        autodetect=False,
+        schema_fields=[
+            {"name": "VendorID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "tpep_pickup_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "tpep_dropoff_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "passenger_count", "type": "INTEGER", "mode": "NULLABLE"},  # Fixed to INTEGER
+            {"name": "trip_distance", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "RatecodeID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "store_and_fwd_flag", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "PULocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "DOLocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "payment_type", "type": "INTEGER", "mode": "NULLABLE"},           
+            {"name": "fare_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "extra", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "mta_tax", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "tip_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "tolls_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "improvement_surcharge", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "total_amount", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "congestion_surcharge", "type": "FLOAT", "mode": "NULLABLE"},
+            {"name": "yearmonth", "type": "INTEGER", "mode": "NULLABLE"},
+        ], 
+        time_partitioning={
+            "type": "DAY",
+            "field": "tpep_pickup_datetime",
+        },
+    )    
+
+    load_fhv_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_fhv_to_bigquery',
+        bucket=BUCKET,
+        source_objects=['fhv/fhv_tripdata_2019-*.parquet'],
+        destination_project_dataset_table='base.raw_fhv_trips',
+        source_format='PARQUET',
+        gcp_conn_id='gcp',
+        write_disposition='WRITE_TRUNCATE', 
+        autodetect=False,
+        schema_fields=[
+            {"name": "dispatching_base_num", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "pickup_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "dropOff_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "PUlocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "DOlocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "SR_Flag", "type": "INTEGER", "mode": "NULLABLE"},           
+            {"name": "Affiliated_base_number", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "yearmonth", "type": "INTEGER", "mode": "NULLABLE"},
+        ], 
+        time_partitioning={
+            "type": "DAY",
+            "field": "pickup_datetime",
+        },
+    )
+
+    load_fhvhv_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_fhvhv_to_bigquery',
+        bucket=BUCKET,
+        source_objects=['fhvhv/fhvhv_tripdata_2021-*.parquet'],
+        destination_project_dataset_table='base.raw_fhvhv_trips',
+        source_format='PARQUET',
+        gcp_conn_id='gcp',
+        write_disposition='WRITE_TRUNCATE', 
+        autodetect=False,
+        schema_fields=[
+            {"name": "hvfhs_license_num", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "dispatching_base_num", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "pickup_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "dropoff_datetime", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "PULocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "DOLocationID", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "SR_Flag", "type": "INTEGER", "mode": "NULLABLE"},           
+            {"name": "yearmonth", "type": "INTEGER", "mode": "NULLABLE"}, 
+        ], 
+        time_partitioning={
+            "type": "DAY",
+            "field": "pickup_datetime",
+        },
+    )    
+
+    load_zone_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_zone_to_bigquery',
+        bucket=BUCKET,
+        source_objects=['zone/taxi_zone_lookup.parquet'],
+        destination_project_dataset_table='base.taxi_zone_lookup',
+        source_format='PARQUET',
+        gcp_conn_id='gcp',
+        write_disposition='WRITE_TRUNCATE', 
+        autodetect=False,
+        schema_fields=[
+            {"name": "locationid", "type": "INTEGER", "mode": "NULLABLE"},
+            {"name": "borough", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "zone", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "service_zone", "type": "STRING", "mode": "NULLABLE"}, 
+        ], 
+    )
+
     create_staging_dataset = BigQueryCreateEmptyDatasetOperator(
         task_id='create_staging_dataset',
         dataset_id='staging',
@@ -118,10 +239,8 @@ def nyc_analysis():
         profile_config=DBT_CONFIG,
         render_config=RenderConfig(
             load_method=LoadMode.DBT_LS,
-            select=['path:models/staging']
-            node_converters={
-            'source': source_converter
-            }
+            select=['path:models/staging'],
+
         )
     )
 

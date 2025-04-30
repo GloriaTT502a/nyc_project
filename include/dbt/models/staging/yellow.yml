@@ -1,10 +1,10 @@
 version: 2 
 
 model: 
-  - name: stg_nyc__green_validations 
+  - name: stg_nyc__yellow_validations 
     description: validations for data quality solution 
 
-  - name: stg_nyc__green_valid_data
+  - name: stg_nyc__yellow_valid_data
     columns:
       - name: pickup_datetime
         tests:

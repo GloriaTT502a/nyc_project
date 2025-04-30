@@ -7,4 +7,7 @@ sources:
     tables: 
       - name: raw_green_trips 
         description: Source table for green taxi trips 
+      
+      - name: raw_yellow_trips 
+        description: Source table for yellow taxi trips
 

@@ -42,6 +42,11 @@ def web_to_gcs(year, service, gcp_conn_id='gcp'):
         # csv file_name
         file_name = f"{service}_tripdata_{year}-{month}.csv.gz"
 
+        # fhvhv only has data in January and June 
+        if service == 'fhvhv' and month != '01':
+            print(f"Skipping {file_name} for fhvhv (only 01 and 06 available)")
+            continue 
+            
         # download it using requests via a pandas df
         request_url = f"{init_url}{service}/{file_name}"
         r = requests.get(request_url)
@@ -49,17 +54,49 @@ def web_to_gcs(year, service, gcp_conn_id='gcp'):
         print(f"Local: {file_name}")
 
         # read it back into a parquet file
-        df = pd.read_csv(file_name, compression='gzip')
-        df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
-        df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
-        df['VendorID'] = df['VendorID'].astype('Int64') 
-        df['RatecodeID'] = df['RatecodeID'].astype('Int64') 
-        df['PULocationID'] = df['PULocationID'].astype('Int64') 
-        df['DOLocationID'] = df['DOLocationID'].astype('Int64')
-        df['trip_type'] = df['trip_type'].astype('Int64')
-        df['payment_type'] = df['payment_type'].astype('Int64')
-        df['passenger_count'] = df['passenger_count'].astype('Int64') 
-        df['store_and_fwd_flag'] = df['store_and_fwd_flag'].astype(str)
+        df = pd.read_csv(file_name, compression='gzip') 
+
+        if service == 'green': 
+            df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['trip_type'] = df['trip_type'].astype('Int64') 
+
+        if service == 'yellow': 
+            df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            
+
+        if service == 'green' or service == 'yellow': 
+
+            df['VendorID'] = df['VendorID'].astype('Int64') 
+            df['RatecodeID'] = df['RatecodeID'].astype('Int64') 
+            df['PULocationID'] = df['PULocationID'].astype('Int64') 
+            df['DOLocationID'] = df['DOLocationID'].astype('Int64')
+            
+            df['payment_type'] = df['payment_type'].astype('Int64')
+            df['passenger_count'] = df['passenger_count'].astype('Int64') 
+            df['store_and_fwd_flag'] = df['store_and_fwd_flag'].astype(str)
+        
+        if service == 'fhv': 
+            df['dispatching_base_num'] = df['dispatching_base_num'].astype(str) 
+            df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['dropOff_datetime'] = pd.to_datetime(df['dropOff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['PUlocationID'] = df['PUlocationID'].astype('Int64') 
+            df['DOlocationID'] = df['DOlocationID'].astype('Int64')
+            df['Affiliated_base_number'] = df['Affiliated_base_number'].astype(str) 
+            df['SR_Flag'] = df['SR_Flag'].astype('Int64') 
+            
+        
+        if service == 'fhvhv': 
+            df['hvfhs_license_num'] = df['hvfhs_license_num'].astype(str) 
+            df['dispatching_base_num'] = df['dispatching_base_num'].astype(str) 
+            df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'], errors='coerce', format='%Y-%m-%d %H:%M:%S').astype('datetime64[us]')
+            df['PULocationID'] = df['PULocationID'].astype('Int64') 
+            df['DOLocationID'] = df['DOLocationID'].astype('Int64')
+            df['SR_Flag'] = df['SR_Flag'].astype('Int64')        
+        
+
         df['yearmonth'] = yearmonth
         file_name = file_name.replace('.csv.gz', '.parquet')
         df.to_parquet(file_name, engine='pyarrow')

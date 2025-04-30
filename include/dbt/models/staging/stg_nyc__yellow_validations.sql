@@ -1,12 +1,11 @@
 {{ config(
     materialized='table',
-    alias='green_validations'
 ) }}
 
 WITH raw_data AS (
     SELECT
         * 
-    FROM {{ ref('stg_green_tripdata') }}
+    FROM {{ ref('stg_nyc__yellow_trip') }}
 ),
 validated_data AS (
     SELECT
