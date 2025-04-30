@@ -13,6 +13,7 @@ from cosmos.constants import LoadMode
 from cosmos.config import ProjectConfig, RenderConfig
 
 from include.web_to_gcs import web_to_gcs
+from include.zone_to_gcs import zone_to_gcs
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator
@@ -45,6 +46,12 @@ def nyc_analysis():
         task_id='download_green_taxi_data',
         python_callable=web_to_gcs,
         op_kwargs={'year': '2019', 'service': 'green', 'gcp_conn_id': 'gcp'},
+    )
+
+    download_zone_data = PythonOperator(
+        task_id='download_zone_data',
+        python_callable=zone_to_gcs,
+        op_kwargs={'gcp_conn_id': 'gcp'},
     )
 
     create_base_dataset = BigQueryCreateEmptyDatasetOperator(
@@ -104,5 +111,22 @@ def nyc_analysis():
         dataset_id='staging',
         gcp_conn_id='gcp',
     )
+
+    create_staging_tables = DbtTaskGroup(
+        group_id='create_staging_tables',
+        project_config=DBT_PROJECT_CONFIG,
+        profile_config=DBT_CONFIG,
+        render_config=RenderConfig(
+            load_method=LoadMode.DBT_LS,
+            select=['path:models/staging']
+            node_converters={
+            'source': source_converter
+            }
+        )
+    )
+
+
+
+
 
 nyc_analysis()

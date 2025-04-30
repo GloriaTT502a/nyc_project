@@ -6,3 +6,34 @@ model:
 
   - name: green_validations 
     description: validations for data quality solution 
+
+  - name: green_valid_data
+    columns:
+      - name: pickup_datetime
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "pickup_datetime <= CURRENT_TIMESTAMP AND pickup_datetime >= '2000-01-01'"
+      - name: dropoff_datetime
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "dropoff_datetime <= CURRENT_TIMESTAMP AND dropoff_datetime >= '2000-01-01'"
+      - name: fare_amount
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "fare_amount >= 0"
+      - name: total_amount
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "total_amount >= 0"
+      - name: passenger_count
+        tests:
+          - expression_is_true:
+              expression: "passenger_count >= 0"
+      - name: trip_distance
+        tests:
+          - expression_is_true:
+              expression: "trip_distance >= 0"

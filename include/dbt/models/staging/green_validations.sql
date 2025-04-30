@@ -1,23 +1,20 @@
 {{ config(
-    materialized='table'
+    materialized='table',
+    alias='green_validations'
 ) }}
 
-with source_data as (
-    select * 
-    from {{ ref('green_preprocessing') }}
+WITH raw_data AS (
+    SELECT
+        * 
+    FROM {{ ref('stg_green_tripdata') }}
+),
+validated_data AS (
+    SELECT
+        *,
+        {{ generate_validation_array(green_trip_warn_rules(), 'quality_warn') }},
+        {{ generate_validation_array(green_trip_drop_rules(), 'quality_drop') }},
+        ARRAY<STRING>[] AS fixes_applied  -- Initialize as empty array
+    FROM raw_data
 )
-
-SELECT
-    *,
-    {{ generate_case_columns('green_warn_rules') }} AS quality_warn
-    --,
-    --{{ generate_case_columns('green_drop_rules') }} AS quality_drop
-FROM source_data
-
-
--- Add debug output to check what the macro returns
-{% set result = generate_case_columns('green_warn_rules') %}
-{{ log(result, info=True) }}
-
-{% set result_drop = generate_case_columns('green_drop_rules') %}
-{{ log(result_drop, info=True) }}
+SELECT *
+FROM validated_data

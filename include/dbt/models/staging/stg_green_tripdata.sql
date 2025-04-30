@@ -9,7 +9,7 @@ with tripdata as
   select *,
     row_number() over(partition by lpep_pickup_datetime, lpep_dropoff_datetime) as rn
   from {{ source('base','raw_green_trips') }}
-  where vendorid is not null 
+  --where vendorid is not null 
 ), 
 renamed as (
   select
