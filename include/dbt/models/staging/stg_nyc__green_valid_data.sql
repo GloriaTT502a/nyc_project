@@ -12,6 +12,7 @@ WITH valid_data AS
         dropoff_locationid, 
         pickup_datetime, 
         dropoff_datetime, 
+        yearmonth, 
         store_and_fwd_flag, 
         passenger_count, 
         trip_distance, 

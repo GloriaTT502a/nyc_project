@@ -10,8 +10,8 @@ WITH raw_data AS (
 validated_data AS (
     SELECT
         *,
-        {{ generate_validation_array(green_trip_warn_rules(), 'quality_warn') }},
-        {{ generate_validation_array(green_trip_drop_rules(), 'quality_drop') }},
+        {{ generate_validation_array(greenyellow_trip_warn_rules(), 'quality_warn') }},
+        {{ generate_validation_array(greenyellow_trip_drop_rules(), 'quality_drop') }},
         ARRAY<STRING>[] AS fixes_applied  -- Initialize as empty array
     FROM raw_data
 )

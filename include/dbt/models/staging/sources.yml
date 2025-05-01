@@ -11,3 +11,9 @@ sources:
       - name: raw_yellow_trips 
         description: Source table for yellow taxi trips
 
+      - name: raw_fhv_trips 
+        description: Source table for yellow taxi trips
+
+      - name: raw_fhvhv_trips 
+        description: Source table for yellow taxi trips
+

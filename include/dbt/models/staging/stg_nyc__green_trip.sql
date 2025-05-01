@@ -24,6 +24,9 @@ renamed as (
     cast(lpep_pickup_datetime as timestamp) as pickup_datetime, 
     cast(lpep_dropoff_datetime as timestamp) as dropoff_datetime, 
 
+    -- yearmonth 
+    yearmonth as yearmonth,  
+
     -- trip info
     store_and_fwd_flag,
     {{ dbt.safe_cast("passenger_count", api.Column.translate_type("integer")) }} as passenger_count,

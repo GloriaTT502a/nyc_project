@@ -1,6 +1,7 @@
-{% macro green_trip_warn_rules() %}
+{% macro greenyellow_trip_warn_rules() %}
   {% set rules = [
     {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
+    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
     {'name': 'fare_amount_negative', 'condition': 'fare_amount < 0'},
     {'name': 'passenger_count_zero', 'condition': 'passenger_count = 0'},
     {'name': 'trip_distance_negative', 'condition': 'trip_distance < 0'},
@@ -9,7 +10,7 @@
   {{ return(rules) }}
 {% endmacro %}
 
-{% macro green_trip_drop_rules() %}
+{% macro greenyellow_trip_drop_rules() %}
   {% set rules = [
     {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
     {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
@@ -19,6 +20,26 @@
   ] %}
   {{ return(rules) }}
 {% endmacro %}
+
+{% macro fhvfhvhv_trip_warn_rules() %}
+  {% set rules = [
+    {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
+    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
+    {'name': 'pickup_locationid_negative', 'condition': 'pickup_locationid < 0'},
+    {'name': 'dropoff_locationid_negative', 'condition': 'dropoff_locationid < 0'} 
+  ] %}
+  {{ return(rules) }}
+{% endmacro %}
+
+{% macro fhvfhvhv_trip_drop_rules() %}
+  {% set rules = [
+    {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'pickup_dropoff_invalid', 'condition': 'pickup_datetime > dropoff_datetime'} 
+  ] %}
+  {{ return(rules) }}
+{% endmacro %}
+
 
 {% macro generate_validation_array(rules, array_name) %}
   {% set conditions = [] %}
