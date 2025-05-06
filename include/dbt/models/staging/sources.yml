@@ -17,3 +17,6 @@ sources:
       - name: raw_fhvhv_trips 
         description: Source table for yellow taxi trips
 
+      - name: taxi_zone_lookup 
+        description: Location information 
+

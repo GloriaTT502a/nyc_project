@@ -181,5 +181,15 @@ models:
               
               
               
+    - name: stg_nyc__taxi_zone_lookup 
+      columns: 
+        - name: LocationID	
+          description: location ID 
+        - name: Borough	
+          description: Borough 
+        - name: Zone	
+          description: Zone name 
+        - name: service_zone
+          description: service zone name 
 
           
