@@ -5,7 +5,7 @@
 WITH raw_data AS (
     SELECT
         * 
-    FROM {{ ref('stg_nyc__fhv_trip') }}
+    FROM {{ ref('stg_nyc__fhv_trip_preprocess') }}
 ),
 validated_data AS (
     SELECT
