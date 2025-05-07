@@ -6,7 +6,7 @@
 WITH unioned_data AS 
 (
     SELECT 
-        {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropoff_datetime', 'yearmonth']) }} as pickup_dropoff_time_id, 
+        {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropoff_datetime']) }} as pickup_dropoff_time_id, 
         pickup_datetime, 
         dropoff_datetime, 
         yearmonth 
@@ -16,7 +16,7 @@ WITH unioned_data AS
     UNION ALL 
     
     SELECT 
-        {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropoff_datetime', 'yearmonth']) }} as pickup_dropoff_time_id, 
+        {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropoff_datetime']) }} as pickup_dropoff_time_id, 
         pickup_datetime, 
         dropoff_datetime, 
         yearmonth 
