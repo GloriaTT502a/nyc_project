@@ -14,3 +14,20 @@ models:
           - name: affiliated_base_number 
           - name: hvfhs_license_num 
           - name: sr_flag
+
+    - name: dim_nyc__datetime
+      description: >
+         
+      columns:
+          - name: datetime_id
+            description: Primary key for this table, generated with a concatenation of vendorid+pickup_datetime
+            tests: 
+              - unique 
+              - not_null 
+          - name: datestamptime
+          - name: year 
+          - name: month 
+          - name: day
+          - name: hour 
+          - name: minute 
+          - name: weekday

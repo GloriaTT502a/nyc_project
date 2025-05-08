@@ -1,0 +1,50 @@
+version: 2 
+
+models:
+    - name: fct_nyc__fhv_fhvhv_trip_data 
+      columns: 
+        - name: tripid 
+          tests: 
+            - unique 
+            - not_null 
+        - name: pickup_locationid 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__zones')
+                field: locationid
+                severity: warn
+        - name: dropoff_locationid 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__zones')
+                field: locationid
+                severity: warn
+        - name: pickup_datetime_id 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__datetime')
+                field: datetime_id
+                severity: warn
+        - name: dropoff_datetime_id 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__datetime')
+                field: datetime_id
+                severity: warn
+        - name: yearmonth 
+          data_type: int64
+        - name: base_num_sr_id 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__base_num_sr')
+                field: base_num_sr_id
+                severity: warn
+        - name: industry_type_id
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__industry_type')
+                field: industry_type_id
+                severity: warn 
+        - name: trip_count 
+          data_type: int64
+

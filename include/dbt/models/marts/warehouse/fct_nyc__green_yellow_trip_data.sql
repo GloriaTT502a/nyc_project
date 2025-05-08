@@ -7,7 +7,8 @@
 WITH fct_yellow_green_trip_cte AS (
     SELECT
         tripid AS tripid,
-        {{ dbt_utils.generate_surrogate_key(['pickup_locationid', 'dropoff_locationid']) }} as location_id, 
+        pickup_locationid, 
+        dropoff_locationid, 
         UNIX_SECONDS(pickup_datetime) AS pickup_datetime_id,
         UNIX_SECONDS(dropoff_datetime) AS dropoff_datetime_id,
         yearmonth, 
@@ -29,7 +30,8 @@ WITH fct_yellow_green_trip_cte AS (
 
     SELECT
         tripid AS tripid,
-        {{ dbt_utils.generate_surrogate_key(['pickup_locationid', 'dropoff_locationid']) }} AS location_id, 
+        pickup_locationid, 
+        dropoff_locationid, 
         UNIX_SECONDS(pickup_datetime) AS pickup_datetime_id,
         UNIX_SECONDS(dropoff_datetime) AS dropoff_datetime_id,
         yearmonth, 
@@ -52,11 +54,12 @@ fct_yg_join AS
 (
     SELECT
         tripid,
-        loc.location_id,
-        dt_pu.datetime_id AS pickup_datetime_id, 
-        dt_do.datetime_id AS dropoff_datetime_id, 
+        pickup_locationid, 
+        dropoff_locationid,
+        fct_yellow_green.pickup_datetime_id, 
+        fct_yellow_green.dropoff_datetime_id, 
         yearmonth, 
-        trip_status.trip_status_id, 
+        fct_yellow_green.trip_status_id, 
         industry_type_id, 
         trip_distance,
         fare_amount,
@@ -69,9 +72,5 @@ fct_yg_join AS
         total_amount,
         congestion_surcharge 
     FROM fct_yellow_green_trip_cte fct_yellow_green
-    INNER JOIN {{ ref('dim_nyc__location') }} loc ON fct_yellow_green.location_id = loc.location_id
-    INNER JOIN {{ ref('dim_nyc__datetime') }} dt_pu ON fct_yellow_green.pickup_datetime_id = dt_pu.datetime_id 
-    INNER JOIN {{ ref('dim_nyc__datetime') }} dt_do ON fct_yellow_green.dropoff_datetime_id = dt_do.datetime_id  
-    INNER JOIN {{ ref('dim_nyc__trip_status') }} trip_status on fct_yellow_green.trip_status_id = trip_status.trip_status_id 
 )
 SELECT * FROM fct_yg_join 
