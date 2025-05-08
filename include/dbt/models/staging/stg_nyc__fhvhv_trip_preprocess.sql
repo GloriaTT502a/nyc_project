@@ -7,14 +7,14 @@
 with tripdata as 
 (
   select *,
-    row_number() over(partition by pickup_datetime, dropOff_datetime) as rn
+    row_number() over(partition by pickup_datetime, dropOff_datetime, PUlocationID, DOlocationID) as rn
   from {{ source('base','raw_fhvhv_trips') }}
   --where vendorid is not null 
 ), 
 renamed as (
   select
     -- identifiers
-    {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropOff_datetime']) }} as tripid, 
+    {{ dbt_utils.generate_surrogate_key(['pickup_datetime', 'dropOff_datetime', 'PUlocationID', 'DOlocationID', "'fhvhv'"]) }} as tripid, 
     {{ dbt.safe_cast("PUlocationID", api.Column.translate_type("integer")) }} as pickup_locationid,
     {{ dbt.safe_cast("DOlocationID", api.Column.translate_type("integer")) }} as dropoff_locationid,  
     

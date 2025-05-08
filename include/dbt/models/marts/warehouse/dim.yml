@@ -1,0 +1,16 @@
+ersion: 2 
+
+models:
+    - name: dim_nyc__base_num_sr
+      description: >
+         
+      columns:
+          - name: base_num_sr_id
+            description: Primary key for this table, generated with a concatenation of vendorid+pickup_datetime
+            tests: 
+              - unique 
+              - not_null 
+          - name: dispatching_base_num
+          - name: affiliated_base_number 
+          - name: hvfhs_license_num 
+          - name: sr_flag
