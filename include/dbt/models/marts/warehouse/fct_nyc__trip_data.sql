@@ -48,7 +48,7 @@ WITH fct_yellow_green_trip_cte AS (
     FROM {{ ref('stg_nyc__green_valid_data') }}
 
 ), 
-fct_join AS 
+fct_yg_join AS 
 (
     SELECT
         tripid,
@@ -74,4 +74,4 @@ fct_join AS
     INNER JOIN {{ ref('dim_nyc__datetime') }} dt_do ON fct_yellow_green.dropoff_datetime_id = dt_do.datetime_id  
     INNER JOIN {{ ref('dim_nyc__trip_status') }} trip_status on fct_yellow_green.trip_status_id = trip_status.trip_status_id 
 )
-SELECT * FROM fct_join 
+SELECT * FROM fct_yg_join 

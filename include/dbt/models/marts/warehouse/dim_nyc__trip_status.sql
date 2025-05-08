@@ -11,7 +11,10 @@ WITH unioned_data AS
         9999 as trip_type, 
         vendorid, 
         store_and_fwd_flag, 
-        ratecodeid 
+        ratecodeid, 
+        payment_type_description, 
+        final_rate_code_description, 
+        LPEP_provider  
     FROM 
         {{ ref('stg_nyc__yellow_valid_data') }} 
     
@@ -23,7 +26,10 @@ WITH unioned_data AS
         trip_type, 
         vendorid, 
         store_and_fwd_flag, 
-        ratecodeid 
+        ratecodeid, 
+        payment_type_description, 
+        final_rate_code_description, 
+        LPEP_provider  
     FROM 
         {{ ref('stg_nyc__green_valid_data') }}
 ), 
@@ -35,7 +41,10 @@ deduplicated AS
         trip_type, 
         vendorid, 
         store_and_fwd_flag, 
-        ratecodeid 
+        ratecodeid, 
+        payment_type_description, 
+        final_rate_code_description, 
+        LPEP_provider  
     FROM 
         unioned_data 
     GROUP BY 
@@ -44,6 +53,9 @@ deduplicated AS
         trip_type, 
         vendorid, 
         store_and_fwd_flag, 
-        ratecodeid
+        ratecodeid, 
+        payment_type_description, 
+        final_rate_code_description, 
+        LPEP_provider 
 ) 
 SELECT * FROM deduplicated 
