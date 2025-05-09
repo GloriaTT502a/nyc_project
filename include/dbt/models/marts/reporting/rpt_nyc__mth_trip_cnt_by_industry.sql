@@ -1,5 +1,6 @@
 {{ config(
     materialized='incremental',
+    full_refresh=true,  
     unique_key=['yearmonth', 'industry_type'],
     pre_hook=[
         "delete from {{ this }} where yearmonth BETWEEN 202101 AND 202112"
@@ -70,28 +71,46 @@ nyc_drop AS
     SELECT 
         yearmonth, 
         industry_type_id, 
-        AVG(CASE 
-            WHEN zo.Borough IN ('Queens', 'Bronx', 'Brooklyn', 'Manhattan', 'Staten Island') 
-            THEN 1.0 
-            ELSE 0.0 
-        END) AS nyc_dropoff_trip_rate
+        SUM(trip_count) AS nyc_dropoff_trip
     FROM 
         unioned_data ud 
     JOIN 
         {{ ref('dim_nyc__zones') }} zo 
     ON ud.dropoff_locationid = zo.locationid 
     WHERE yearmonth BETWEEN 2021*100+1 AND 2021*100+12  
+    AND Borough IN ('Queens', 'Bronx', 'Brooklyn', 'Manhattan', 'Staten Island') 
     GROUP BY 
         yearmonth, 
         industry_type_id  
+), 
+months AS 
+(
+    SELECT
+        DATE '2021-01-01' + INTERVAL m MONTH AS month_start,
+        DATE_TRUNC(DATE '2021-01-01' + INTERVAL m MONTH, MONTH) AS month_first_day
+    FROM UNNEST(GENERATE_ARRAY(0, 11)) AS m
+), 
+min_cnt AS 
+(
+    SELECT
+        CAST(FORMAT_DATE('%Y%m', month_start) AS INTEGER) AS yearmonth,
+        TIMESTAMP_DIFF(
+            DATE_ADD(month_first_day, INTERVAL 1 MONTH),
+            month_first_day,
+            MINUTE
+        ) AS minutes_in_month
+    FROM months
 ), 
 final AS 
 (
     SELECT 
         cur_data.yearmonth, 
         ind_typ.industry_type, 
-        data_2019.TRIP_CNT / cur_data.TRIP_CNT AS trip_relv_prepan, 
-        nyc_dropoff_trip_rate 
+        cur_data.TRIP_CNT AS trip_count, 
+        data_2019.TRIP_CNT AS prepan_count, 
+        cur_data.TRIP_CNT / data_2019.TRIP_CNT AS trip_relv_prepan, 
+        min_cnt.minutes_in_month AS minutes_in_month, 
+        nyc_drop.nyc_dropoff_trip 
     FROM 
         data_2019 
     JOIN 
@@ -104,9 +123,9 @@ final AS
         cur_data.industry_type_id = nyc_drop.industry_type_id 
     JOIN {{ ref('dim_nyc__industry_type') }} ind_typ 
     ON cur_data.industry_type_id = ind_typ.industry_type_id 
+    JOIN min_cnt 
+    ON cur_data.yearmonth = min_cnt.yearmonth 
 ) 
-
-
 SELECT * FROM final 
 
 
