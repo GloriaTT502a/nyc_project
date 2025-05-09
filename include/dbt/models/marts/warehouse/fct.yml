@@ -48,3 +48,57 @@ models:
         - name: trip_count 
           data_type: int64
 
+    - name: fct_nyc__green_yellow_trip_data
+      columns: 
+        - name: tripid 
+          tests: 
+            - unique 
+            - not_null 
+        - name: pickup_locationid 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__zones')
+                field: locationid
+                severity: warn
+        - name: dropoff_locationid 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__zones')
+                field: locationid
+                severity: warn
+        - name: pickup_datetime_id
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__datetime')
+                field: datetime_id
+                severity: warn 
+        - name: dropoff_datetime_id
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__datetime')
+                field: datetime_id
+                severity: warn 
+        - name: yearmonth 
+          data_type: int64
+        - name: trip_status_id
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__trip_status')
+                field: trip_status_id
+                severity: warn 
+        - name: industry_type_id 
+          tests: 
+            - relationships:
+                to: ref('dim_nyc__industry_type')
+                field: industry_type_id
+                severity: warn
+        - name: trip_distance 
+        - name: fare_amount 
+        - name: extra 
+        - name: mta_tax 
+        - name: tip_amount
+        - name: tolls_amount 
+        - name: ehail_fee 
+        - name: improvement_surcharge 
+        - name: total_amount 
+        - name: congestion_surcharge 

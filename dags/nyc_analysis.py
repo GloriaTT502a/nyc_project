@@ -43,21 +43,21 @@ def nyc_analysis():
     ) 
 
     download_green_taxi_data = PythonOperator(
-        task_id='download_green_taxi_data',
+        task_id=f'download_green_taxi_data',
         python_callable=web_to_gcs,
-        op_kwargs={'year': '2019', 'service': 'green', 'gcp_conn_id': 'gcp'},
+        op_kwargs={'year': ['2020', '2021'], 'service': 'green', 'gcp_conn_id': 'gcp'},
     )
 
     download_yellow_taxi_data = PythonOperator(
         task_id='download_yellow_taxi_data',
         python_callable=web_to_gcs,
-        op_kwargs={'year': '2019', 'service': 'yellow', 'gcp_conn_id': 'gcp'},
+        op_kwargs={'year': ['2020', '2021'], 'service': 'yellow', 'gcp_conn_id': 'gcp'},
     )    
 
     download_fhv_taxi_data = PythonOperator(
         task_id='download_fhv_taxi_data',
         python_callable=web_to_gcs,
-        op_kwargs={'year': '2019', 'service': 'fhv', 'gcp_conn_id': 'gcp'},
+        op_kwargs={'year': ['2020', '2021'], 'service': 'fhv', 'gcp_conn_id': 'gcp'},
     ) 
 
     download_fhvhv_taxi_data = PythonOperator(
@@ -89,7 +89,7 @@ def nyc_analysis():
     load_green_to_bigquery = GCSToBigQueryOperator(
         task_id='load_green_to_bigquery',
         bucket=BUCKET,
-        source_objects=['green/green_tripdata_2019-*.parquet'],
+        source_objects=['green/green_tripdata_*.parquet'],
         destination_project_dataset_table='base.raw_green_trips',
         source_format='PARQUET',
         gcp_conn_id='gcp',
@@ -127,7 +127,7 @@ def nyc_analysis():
     load_yellow_to_bigquery = GCSToBigQueryOperator(
         task_id='load_yellow_to_bigquery',
         bucket=BUCKET,
-        source_objects=['yellow/yellow_tripdata_2019-*.parquet'],
+        source_objects=['yellow/yellow_tripdata_*.parquet'],
         destination_project_dataset_table='base.raw_yellow_trips',
         source_format='PARQUET',
         gcp_conn_id='gcp',
@@ -163,7 +163,7 @@ def nyc_analysis():
     load_fhv_to_bigquery = GCSToBigQueryOperator(
         task_id='load_fhv_to_bigquery',
         bucket=BUCKET,
-        source_objects=['fhv/fhv_tripdata_2019-*.parquet'],
+        source_objects=['fhv/fhv_tripdata_*.parquet'],
         destination_project_dataset_table='base.raw_fhv_trips',
         source_format='PARQUET',
         gcp_conn_id='gcp',

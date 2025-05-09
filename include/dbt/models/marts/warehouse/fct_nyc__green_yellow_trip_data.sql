@@ -23,7 +23,8 @@ WITH fct_yellow_green_trip_cte AS (
         NULL AS ehail_fee, 
         improvement_surcharge,
         total_amount,
-        congestion_surcharge
+        congestion_surcharge, 
+        1 AS trip_count 
     FROM {{ ref('stg_nyc__yellow_valid_data') }}
 
     UNION ALL 
@@ -46,7 +47,8 @@ WITH fct_yellow_green_trip_cte AS (
         ehail_fee, 
         improvement_surcharge,
         total_amount,
-        congestion_surcharge  
+        congestion_surcharge, 
+        1 AS trip_count 
     FROM {{ ref('stg_nyc__green_valid_data') }}
 
 ), 
@@ -70,7 +72,8 @@ fct_yg_join AS
         ehail_fee, 
         improvement_surcharge,
         total_amount,
-        congestion_surcharge 
+        congestion_surcharge, 
+        trip_count
     FROM fct_yellow_green_trip_cte fct_yellow_green
 )
 SELECT * FROM fct_yg_join 
