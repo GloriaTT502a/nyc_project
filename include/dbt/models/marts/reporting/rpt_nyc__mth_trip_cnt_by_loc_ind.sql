@@ -2,9 +2,6 @@
     materialized='incremental',
     full_refresh=true,  
     unique_key=['yearmonth', 'industry_type'],
-    pre_hook=[
-    "truncate table {{ this }} "
-    ]
 
 ) }}
 
@@ -30,44 +27,25 @@ WITH unioned_data AS
     FROM 
         {{ ref('fct_nyc__green_yellow_trip_data') }}  
 ), 
-YTD_Trip AS 
-(
-    SELECT 
-        cast(yearmonth/100 as integer) as year,  
-        industry_type_id, 
-        pickup_locationid, 
-        dropoff_locationid, 
-        sum(trip_count) AS TRIP_CNT
-    FROM 
-        unioned_data  
-    WHERE yearmonth >= cast(yearmonth/100 as integer)*100+1 AND 
-        yearmonth <= cast(yearmonth/100 as integer)*100+12  
-    GROUP BY 
-        cast(yearmonth/100 as integer), 
-        industry_type_id, 
-        pickup_locationid, 
-        dropoff_locationid   
- 
-), 
 nyc_drop AS 
 (
     SELECT 
-        year, 
+        yearmonth, 
         industry_type_id, 
         zo_drop.borough as drop_borough, 
         zo_drop.zone as drop_zone, 
-        zo_drop.service_zone as drop_service_zone, 
+        zo_drop.service_zone as drop_service_zone,
         zo_pick.borough as pick_borough, 
         zo_pick.zone as pick_zone, 
-        zo_pick.service_zone as pick_service_zone,
-        TRIP_CNT 
+        zo_pick.service_zone as pick_service_zone, 
+        trip_count as TRIP_CNT 
     FROM 
-        YTD_Trip  
+        unioned_data   
     JOIN 
         {{ ref('dim_nyc__zones') }} zo_drop  
-    ON YTD_Trip.dropoff_locationid = zo_drop.locationid 
+    ON unioned_data.dropoff_locationid = zo_drop.locationid 
     JOIN {{ ref('dim_nyc__zones') }} zo_pick 
-    ON YTD_Trip.pickup_locationid = zo_pick.locationid  
+    ON unioned_data.pickup_locationid = zo_pick.locationid  
 )
 SELECT * FROM nyc_drop 
 
