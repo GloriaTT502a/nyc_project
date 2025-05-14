@@ -38,14 +38,23 @@ nyc_drop AS
         zo_pick.borough as pick_borough, 
         zo_pick.zone as pick_zone, 
         zo_pick.service_zone as pick_service_zone, 
-        trip_count as TRIP_CNT 
+        SUM(trip_count) as TRIP_CNT 
     FROM 
         unioned_data   
     JOIN 
         {{ ref('dim_nyc__zones') }} zo_drop  
     ON unioned_data.dropoff_locationid = zo_drop.locationid 
     JOIN {{ ref('dim_nyc__zones') }} zo_pick 
-    ON unioned_data.pickup_locationid = zo_pick.locationid  
+    ON unioned_data.pickup_locationid = zo_pick.locationid 
+    GROUP BY 
+        yearmonth, 
+        industry_type_id, 
+        zo_drop.borough, 
+        zo_drop.zone, 
+        zo_drop.service_zone,
+        zo_pick.borough, 
+        zo_pick.zone, 
+        zo_pick.service_zone 
 )
 SELECT * FROM nyc_drop 
 
