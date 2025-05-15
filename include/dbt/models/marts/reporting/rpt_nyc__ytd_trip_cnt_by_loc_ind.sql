@@ -57,9 +57,21 @@ nyc_drop AS
         zo_drop.borough as drop_borough, 
         zo_drop.zone as drop_zone, 
         zo_drop.service_zone as drop_service_zone, 
+        CASE 
+        WHEN zo_drop.borough IN ('Queens', 'Bronx', 'Brooklyn', 'Manhattan', 'Staten Island') 
+        THEN 'NYC' 
+        WHEN zo_drop.borough IS NULL OR zo_drop.borough = 'Unknown' 
+        THEN 'Unknown' 
+        ELSE 'Non-NYC' END as drop_is_nyc, 
         zo_pick.borough as pick_borough, 
         zo_pick.zone as pick_zone, 
         zo_pick.service_zone as pick_service_zone,
+        CASE 
+        WHEN zo_pick.borough IN ('Queens', 'Bronx', 'Brooklyn', 'Manhattan', 'Staten Island') 
+        THEN 'NYC' 
+        WHEN zo_pick.borough IS NULL OR zo_pick.borough = 'Unknown' 
+        THEN 'Unknown' 
+        ELSE 'Non-NYC' END as pick_is_nyc,
         TRIP_CNT 
     FROM 
         YTD_Trip  
