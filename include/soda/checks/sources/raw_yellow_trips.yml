@@ -1,0 +1,25 @@
+checks for raw_yellow_trips:
+  - schema:
+      fail:
+        when required column missing: [tpep_pickup_datetime, tpep_dropoff_datetime]
+        when wrong column type:
+          VendorID: integer
+          tpep_pickup_datetime: timestamp
+          tpep_dropoff_datetime: timestamp
+          passenger_count: integer
+          trip_distance: float64
+          RatecodeID: integer
+          store_and_fwd_flag: string
+          PULocationID: integer
+          DOLocationID: integer
+          payment_type: integer
+          fare_amount: float64
+          extra: float64
+          mta_tax: float64
+          tip_amount: float64
+          tolls_amount: float64
+          improvement_surcharge: float64
+          total_amount: float64
+          congestion_surcharge: float64
+          yearmonth: integer
+
