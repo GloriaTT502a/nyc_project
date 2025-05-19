@@ -1,6 +1,7 @@
 checks for raw_yellow_trips:
   - schema: 
     fail: 
+      when required column missing: [lpep_pickup_datetime, lpep_dropoff_datetime]
       when wrong column type: 
         VendorID: integer 
           
