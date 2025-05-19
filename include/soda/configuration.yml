@@ -1,4 +1,4 @@
-data_source base:
+data_source nyc_analysis:
   type: bigquery
   connection:
     account_info_json_path: /usr/local/airflow/include/gcp/service_account.json
@@ -7,15 +7,4 @@ data_source base:
     - https://www.googleapis.com/auth/cloud-platform
     - https://www.googleapis.com/auth/drive
     project_id: 'sigma-heuristic-457716-n7'
-    dataset: base 
-
-data_source staging:
-  type: bigquery
-  connection:
-    account_info_json_path: /usr/local/airflow/include/gcp/service_account.json
-    auth_scopes:
-    - https://www.googleapis.com/auth/bigquery
-    - https://www.googleapis.com/auth/cloud-platform
-    - https://www.googleapis.com/auth/drive
-    project_id: 'sigma-heuristic-457716-n7'
-    dataset: staging  
+    database: base

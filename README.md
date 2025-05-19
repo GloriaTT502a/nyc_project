@@ -5,16 +5,15 @@ Welcome to NYC project!
 
 This project uses 
     1 [astro](https://www.astronomer.io/dg/signup-airflow/?utm_term=astro%20airflow&utm_campaign=brand-ft-global&utm_source=adwords&utm_medium=ppc&hsa_acc=4274135664&hsa_cam=21865965766&hsa_grp=169329542829&hsa_ad=743940119888&hsa_src=g&hsa_tgt=kwd-1777215821248&hsa_kw=astro%20airflow&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=21865965766&gbraid=0AAAAADP7Y9h6CsvefFMH8xTG9Q-_USBQ8&gclid=Cj0KCQjwoZbBBhDCARIsAOqMEZUoRqNGZytzbavrQZdXT9hYyecnTyi5p1hJg3NOWR7pZm2bxNfPb_YaAoMIEALw_wcB) 
-    2 cosmos 
-    3 dbt 
-    4 airflow 
+    2 [cosmos](https://www.astronomer.io/cosmos/) 
+    3 [dbt](https://www.getdbt.com/product/what-is-dbt) 
+    4 [airflow](https://airflow.apache.org/)
     5 BigQuery 
     6 Google Bucket 
-    7 Python 
+    7 [Soda](https://www.soda.io/) 
 to analyze the taxi in new york city. 
 
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
 
 Project Contents
 ================

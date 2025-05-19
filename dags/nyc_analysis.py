@@ -227,6 +227,14 @@ def nyc_analysis():
         ], 
     )
 
+    @task.external_python(python='/usr/local/airflow/soda_venv/bin/python')
+    def check_load(scan_name='check_load', checks_subpath='sources'):
+        from include.soda.check_function import check
+
+        return check(scan_name, checks_subpath)
+
+    check_load()
+
     create_staging_dataset = BigQueryCreateEmptyDatasetOperator(
         task_id='create_staging_dataset',
         dataset_id='staging',
