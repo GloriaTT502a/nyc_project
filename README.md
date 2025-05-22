@@ -36,9 +36,9 @@ Data Quality Control
 1. table data test step in dbt
 
 2. data cleaning 
-    Separate data as valid and invalid data. 
+    Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
 
-    For green taxt records: 
+    Data cleaning rules for green taxt records: 
     
     1) green_warn_rules:
         - name: pickup_datetime_future
@@ -66,3 +66,34 @@ Data Quality Control
           description: "Total amount must be positive"                                
 
 
+    Data cleaning rules for yellow taxt records: 
+
+    1) yellow_warn_rules:
+        - name: pickup_datetime_future:
+          condition: "pickup_datetime <= current_timestamp()"
+          description: "Pickup datetime should not be in the future"
+        - name: invalid_fare_amount:
+          condition: "fare_amount >= 0"
+          description: "Fare amount should be non-negative"
+        - name: missing_passenger_count:
+          condition: "passenger_count IS NOT NULL"
+          description: "Passenger count should not be null"
+        - name: unusual_trip_distance:
+          condition: "trip_distance BETWEEN 0 AND 100"
+          description: "Trip distance should be within 0-100 miles"
+
+    2) yellow_drop_rules:
+        - name: null_pickup_datetime:
+          condition: "pickup_datetime IS NOT NULL"
+          description: "Pickup datetime must not be null"
+        - name: null_dropoff_datetime:
+          condition: "dropoff_datetime IS NOT NULL"
+          description: "Dropoff datetime must not be null"
+        - name: invalid_location:
+          condition: "pickup_longitude BETWEEN -74.3 AND -73.7 AND pickup_latitude BETWEEN 40.5 AND 41.0"
+          description: "Pickup location must be within NYC bounds"
+        - name: negative_total_amount:
+          condition: "total_amount > 0"
+          description: "Total amount must be positive"
+
+          

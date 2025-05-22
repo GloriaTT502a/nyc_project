@@ -1,29 +1,29 @@
 version: 2
 
 yellow_warn_rules:
-  pickup_datetime_future:
+  - name: pickup_datetime_future:
     condition: "pickup_datetime <= current_timestamp()"
     description: "Pickup datetime should not be in the future"
-  invalid_fare_amount:
+  - name: invalid_fare_amount:
     condition: "fare_amount >= 0"
     description: "Fare amount should be non-negative"
-  missing_passenger_count:
+  - name: missing_passenger_count:
     condition: "passenger_count IS NOT NULL"
     description: "Passenger count should not be null"
-  unusual_trip_distance:
+  - name: unusual_trip_distance:
     condition: "trip_distance BETWEEN 0 AND 100"
     description: "Trip distance should be within 0-100 miles"
 
 yellow_drop_rules:
-  null_pickup_datetime:
+  - name: null_pickup_datetime:
     condition: "pickup_datetime IS NOT NULL"
     description: "Pickup datetime must not be null"
-  null_dropoff_datetime:
+  - name: null_dropoff_datetime:
     condition: "dropoff_datetime IS NOT NULL"
     description: "Dropoff datetime must not be null"
-  invalid_location:
+  - name: invalid_location:
     condition: "pickup_longitude BETWEEN -74.3 AND -73.7 AND pickup_latitude BETWEEN 40.5 AND 41.0"
     description: "Pickup location must be within NYC bounds"
-  negative_total_amount:
+  - name: negative_total_amount:
     condition: "total_amount > 0"
     description: "Total amount must be positive"
