@@ -252,6 +252,23 @@ def nyc_analysis():
         )
     )
 
+    create_dwh_dataset = BigQueryCreateEmptyDatasetOperator(
+        task_id='create_dwh_dataset',
+        dataset_id='dwh',
+        gcp_conn_id='gcp',
+    )
+
+    create_dwh_tables = DbtTaskGroup(
+        group_id='create_dwh_tables',
+        project_config=DBT_PROJECT_CONFIG,
+        profile_config=DBT_CONFIG,
+        render_config=RenderConfig(
+            load_method=LoadMode.DBT_LS,
+            select=['path:models/marts/warehouse'],
+
+        )
+    )
+
 
 
 
