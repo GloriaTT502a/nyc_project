@@ -2,7 +2,9 @@
     materialized='incremental',
     full_refresh=true,  
     unique_key=['yearmonth', 'industry_type'],
-
+    pre_hook=[
+        "delete from {{ this }} where yearmonth BETWEEN 202101 AND 202112"
+    ] 
 ) }}
 
 WITH unioned_data AS 
