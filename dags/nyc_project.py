@@ -1,38 +1,42 @@
 from airflow.decorators import dag, task 
-from datetime import datetime 
-from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
-from astro import sql as aql 
-from astro.files import File 
-from airflow.models.baseoperator import chain
-from astro.sql.table import Table, Metadata 
-from astro.constants import FileType
-from include.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
-from cosmos.airflow.task_group import DbtTaskGroup
-from cosmos.constants import LoadMode
-from cosmos.config import ProjectConfig, RenderConfig
-
-from include.web_to_gcs import web_to_gcs
-from include.zone_to_gcs import zone_to_gcs
+from datetime import datetime, timedelta 
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator 
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator  # Correct import 
-from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator 
+
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
+from cosmos.airflow.task_group import DbtTaskGroup
+from cosmos.config import ProjectConfig, RenderConfig
+
+from include.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
+from cosmos.constants import LoadMode
+
+from include.web_to_gcs import web_to_gcs
+from include.zone_to_gcs import zone_to_gcs
+
+from astro import sql as aql
+from astro.files import File
+from astro.sql.table import Table, Metadata 
+from astro.constants import FileType
+
+from airflow.models.baseoperator import chain
 
 import os
 
 BUCKET = os.environ.get("GCP_GCS_BUCKET", "nyc_project_sigma_heuristic")
 
+# Define the basic parameters of the DAG, like schedule and start_date
 @dag(
-    dag_id="nyc_analysis", 
-    start_date=datetime(2025, 4, 23), 
-    schedule=None, 
-    catchup=False, 
-    tags=['nyc_analysis'], 
-) 
-
-def nyc_analysis(): 
+    start_date=datetime(2024, 1, 1),
+    schedule=None,
+    catchup=False,
+    tags=["nyc_project"],
+    dagrun_timeout=timedelta(hours=2),
+    max_active_runs=1, 
+    max_active_tasks=1,
+)
+def nyc_project(): 
     create_bucket = GCSCreateBucketOperator(
         task_id='create_bucket',
         bucket_name=BUCKET,  
@@ -40,7 +44,7 @@ def nyc_analysis():
         gcp_conn_id='gcp',
         location='US',  # Match VM zone
         storage_class='STANDARD',
-    ) 
+    )
 
     download_green_taxi_data = PythonOperator(
         task_id=f'download_green_taxi_data',
@@ -227,27 +231,20 @@ def nyc_analysis():
         ], 
     )
 
-    @task.external_python(python='/usr/local/airflow/soda_venv/bin/python')
-    def check_load(scan_name='check_load', checks_subpath='sources'):
-        from include.soda.check_function import check
-
-        return check(scan_name, checks_subpath)
-
-    check_load()
-
     create_staging_dataset = BigQueryCreateEmptyDatasetOperator(
         task_id='create_staging_dataset',
         dataset_id='staging',
         gcp_conn_id='gcp',
     )
 
+
     create_staging_tables = DbtTaskGroup(
-        group_id='create_staging_tables',
+        group_id='create_staging_tables', 
         project_config=DBT_PROJECT_CONFIG,
         profile_config=DBT_CONFIG,
         render_config=RenderConfig(
             load_method=LoadMode.DBT_LS,
-            select=['path:models/staging'],
+            select=['path:models/staging']
 
         )
     )
@@ -258,13 +255,20 @@ def nyc_analysis():
         gcp_conn_id='gcp',
     )
 
-    create_dwh_tables = DbtTaskGroup(
-        group_id='create_dwh_tables',
+    create_reporting_dataset = BigQueryCreateEmptyDatasetOperator(
+        task_id='create_reporting_dataset',
+        dataset_id='rpt',
+        gcp_conn_id='gcp',
+    )
+
+
+    create_dwh_reporting_tables = DbtTaskGroup(
+        group_id='create_dwh_reporting_tables',
         project_config=DBT_PROJECT_CONFIG,
         profile_config=DBT_CONFIG,
         render_config=RenderConfig(
             load_method=LoadMode.DBT_LS,
-            select=['path:models/marts/warehouse'],
+            select=['path:models/marts'],
 
         )
     )
@@ -272,5 +276,26 @@ def nyc_analysis():
 
 
 
+    chain(
+        create_bucket,
+        download_green_taxi_data,
+        download_yellow_taxi_data,
+        download_fhv_taxi_data,
+        download_fhvhv_taxi_data,
+        download_zone_data,
+        create_base_dataset,
+        create_tables,
+        load_green_to_bigquery,
+        load_yellow_to_bigquery,
+        load_fhv_to_bigquery,
+        load_fhvhv_to_bigquery,
+        load_zone_to_bigquery, 
+        create_staging_dataset,
+        create_staging_tables,
+        create_dwh_dataset, 
+        create_reporting_dataset, 
+        create_dwh_reporting_tables, 
+    )
 
-nyc_analysis()
+
+nyc_project() 

@@ -6,7 +6,7 @@ nyc_project:
     method: service-account
     keyfile: /usr/local/airflow/include/gcp/service_account.json
     project: sigma-heuristic-457716-n7
-    dataset: nyc_project
+    dataset: staging
     threads: 1
     timeout_seconds: 300
     location: US

@@ -2,9 +2,7 @@
     materialized='incremental',
     full_refresh=true,  
     unique_key=['yearmonth', 'industry_type'],
-    pre_hook=[
-    "truncate table {{ this }} "
-    ]
+
 
 ) }}
 

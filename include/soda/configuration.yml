@@ -1,4 +1,4 @@
-data_source nyc_analysis:
+data_source nyc_project:
   type: bigquery
   connection:
     account_info_json_path: /usr/local/airflow/include/gcp/service_account.json
