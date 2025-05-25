@@ -86,57 +86,78 @@ It typically consists of staging, warehouse, and reporting layers, each serving 
 
 Data Quality Control 
 =========================== 
+Data quality is ensured through dbt tests and custom data cleaning rules applied to yellow, green, FHV, and FHVHV taxi records.
 
-### Test tables in dbt 
-  - Test for staging tables 
+
+### dbt Tests
+- ### Staging Tables:  
     
-    1) For valid tables, data is not null. 
-      ![Test for staging tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_staging_table.png)
-
-  - Test for warehouse tables 
+    - Test: Ensure data is not null for critical columns (e.g., pickup_datetime, dropoff_datetime). 
       
-    1) For dim tables, primary key is unique and not null. 
+    - Example: 
+    ![Test for staging tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_staging_table.png)
+
+  - ### Warehouse Tables:  
+      
+    - ### Dimension Tables: 
+
+      - Test: Primary keys are unique and not null. 
+      
+      - Example: 
       ![Test for warehouse tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_dim_table.png)
 
       
-    2) For fact tables, the foreign key can be found in primary key. 
+    - ### Fact Tables: 
+
+      - Test: Foreign keys reference valid primary keys in dimension tables.
+
+      - Example: 
       ![Test for fact tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_fact_table.png)
 
 ### Data cleaning 
     
-Separate data as valid and invalid data according to data cleaning rules for green, yellow, fhv and fhvhv taxi records. 
+Data is categorized as valid or invalid based on predefined rules. Invalid records are excluded from the valid dataset. 
+
+Only valid records will be used for warehousing and reporting. 
 
 ![Datavalidation1](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidationgreen.png)
 
 ![Datavalidation2](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidationfhv.png)
 
-- For green and yellow taxi records: 
-  
-  The green and yellow taxi records with below conditions will be deleted from valid table: 
+### Green and Yellow Taxi Records
 
-    {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
-    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
-    {'name': 'fare_amount_negative', 'condition': 'fare_amount < 0'},
-    {'name': 'passenger_count_zero', 'condition': 'passenger_count = 0'},
-    {'name': 'trip_distance_negative', 'condition': 'trip_distance < 0'},
-    {'name': 'total_amount_negative', 'condition': 'total_amount < 0'}
-    {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
-    {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
-    {'name': 'pickup_dropoff_invalid', 'condition': 'pickup_datetime > dropoff_datetime'},
-    {'name': 'fare_amount_null', 'condition': 'fare_amount IS NULL'},
-    {'name': 'total_amount_null', 'condition': 'total_amount IS NULL'}    
+Records meeting the following conditions are removed from the valid dataset:
+
+- pickup_datetime IS NULL
+- dropoff_datetime IS NULL
+- fare_amount < 0
+- passenger_count = 0
+- trip_distance < 0
+- total_amount < 0
+- pickup_datetime > CURRENT_TIMESTAMP()
+- dropoff_datetime > CURRENT_TIMESTAMP()
+- pickup_datetime > dropoff_datetime
+- fare_amount IS NULL
+- total_amount IS NULL
+
     
-- For fhv and fhvhv taxi records: 
+### FHV and FHVHV Taxi Records
   
-  The fhv and fhvhv taxi records with below conditions will be deleted from valid table:  
+Records meeting the following conditions are removed from the valid dataset: 
 
-    {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
-    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
-    {'name': 'pickup_locationid_negative', 'condition': 'pickup_locationid < 0'},
-    {'name': 'dropoff_locationid_negative', 'condition': 'dropoff_locationid < 0'} 
-    {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
-    {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
-    {'name': 'pickup_dropoff_invalid', 'condition': 'pickup_datetime > dropoff_datetime'} 
+- pickup_datetime IS NULL
+- dropoff_datetime IS NULL
+- pickup_locationid < 0
+- dropoff_locationid < 0
+- pickup_datetime > CURRENT_TIMESTAMP()
+- dropoff_datetime > CURRENT_TIMESTAMP()
+- pickup_datetime > dropoff_datetime
+
+
+WorkFlow in Apache Airflow UI
+==============================
+
+- The Whole Workflow
 
 
 
