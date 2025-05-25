@@ -1,26 +1,40 @@
-Overview
+NYC Project
 ========
 
-Welcome to NYC project! 
+Overview
+
 
 This project uses 
-    1 [Astro](https://www.astronomer.io/dg/signup-airflow/?utm_term=astro%20airflow&utm_campaign=brand-ft-global&utm_source=adwords&utm_medium=ppc&hsa_acc=4274135664&hsa_cam=21865965766&hsa_grp=169329542829&hsa_ad=743940119888&hsa_src=g&hsa_tgt=kwd-1777215821248&hsa_kw=astro%20airflow&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=21865965766&gbraid=0AAAAADP7Y9h6CsvefFMH8xTG9Q-_USBQ8&gclid=Cj0KCQjwoZbBBhDCARIsAOqMEZUoRqNGZytzbavrQZdXT9hYyecnTyi5p1hJg3NOWR7pZm2bxNfPb_YaAoMIEALw_wcB) 
-    2 [Cosmos](https://www.astronomer.io/cosmos/) 
-    3 [DBT](https://www.getdbt.com/product/what-is-dbt) 
-    4 [Apache Airflow](https://airflow.apache.org/)
-    5 BigQuery 
-    6 Google Bucket 
-    7 [Soda](https://www.soda.io/) 
-    8 Power BI
-to analyze the taxi in new york city. 
+
+1. [Astro](https://www.astronomer.io/dg/signup-airflow/?utm_term=astro%20airflow&utm_campaign=brand-ft-global&utm_source=adwords&utm_medium=ppc&hsa_acc=4274135664&hsa_cam=21865965766&hsa_grp=169329542829&hsa_ad=743940119888&hsa_src=g&hsa_tgt=kwd-1777215821248&hsa_kw=astro%20airflow&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=21865965766&gbraid=0AAAAADP7Y9h6CsvefFMH8xTG9Q-_USBQ8&gclid=Cj0KCQjwoZbBBhDCARIsAOqMEZUoRqNGZytzbavrQZdXT9hYyecnTyi5p1hJg3NOWR7pZm2bxNfPb_YaAoMIEALw_wcB): Orchestration 
+2. [Cosmos](https://www.astronomer.io/cosmos/): Integration Apache Airflow and DBT 
+3. [DBT](https://www.getdbt.com/product/what-is-dbt): Transformation
+4. [Apache Airflow](https://airflow.apache.org/): Workflow
+5. BigQuery: Computing
+6. Google Bucket: Storage
+7. Power BI: Validation 
+
+to implements a three-layer data warehouse architecture (staging, warehouse, reporting) to process and analyze taxi trip in New York. 
 
 
 
-Project Contents
+Features
 ================
+- Three layer data model implementation 
+- Use open source tools: airflow and dbt 
+- Use Google Cloud Platform (Bigquery, buckert)
 
 
-Workflow 
+Prerequisites
+================ 
+- Python 3.10 
+- Docker 
+- Astro 
+- GCP 
+- Power BI
+
+
+Architecture 
 ================
 ![workflow diagram](https://github.com/GloriaTT502a/nyc_project/blob/img/img/workflow.png)
 
@@ -62,7 +76,7 @@ Data Quality Control
 
 ### Data cleaning 
     
-Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
+Separate data as valid and invalid data according to data cleaning rules for green, yellow, fhv and fhvhv taxi records. 
 
 ![Datavalidation1](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidationgreen.png)
 
