@@ -54,7 +54,7 @@ The project follows a modular architecture, as illustrated below:
 - ### Data Ingestion: 
   Raw NYC taxi data (yellow, green, FHV, FHVHV) is ingested from Google Cloud Storage.
 - ### Orchestration: 
-  Astro and Airflow manage the ETL pipeline.- - 
+  Astro and Airflow manage the ETL pipeline. 
 - ### Transformation: 
   dbt processes data through staging, warehouse, and reporting layers.
 - ### Storage and Compute: 
@@ -71,23 +71,17 @@ Three_Layers_DataModeling:
 
 It typically consists of staging, warehouse, and reporting layers, each serving distinct purposes to ensure data is efficiently processed, stored, and presented for analysis. 
 
-- ### Staging Layer:
-  ### Purpose: 
-      Validates, cleanses, and deduplicates raw data to ensure quality.
-  ### Tasks: 
-      Loads raw taxi data, applies initial cleaning rules, and prepares data for transformation.
+- Staging Layer:
+  Purpose: Validates, cleanses, and deduplicates raw data to ensure quality.
+  Tasks: Loads raw taxi data, applies initial cleaning rules, and prepares data for transformation.
 
-- ### Warehouse Layer:
-  ### Purpose: 
-      Integrates and transforms data into a structured format (dimension and fact tables).
-  ### Tasks: 
-      Uses dbt to create dimension (e.g., time, location) and fact (e.g., trip details) tables.
+- Warehouse Layer:
+  Purpose: Integrates and transforms data into a structured format (dimension and fact tables).
+  Tasks: Uses dbt to create dimension (e.g., time, location) and fact (e.g., trip details) tables.
 
-- ### Reporting Layer:
-  ### Purpose: 
-      Aggregates data and generates KPIs for business intelligence tools.
-  ### Tasks: 
-      Produces summarized tables and metrics for Power BI integration.
+- Reporting Layer:
+  Purpose: Aggregates data and generates KPIs for business intelligence tools.
+  Tasks: Produces summarized tables and metrics for Power BI integration.
 
 
 Data Quality Control 
