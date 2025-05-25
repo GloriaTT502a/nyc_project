@@ -64,7 +64,9 @@ Data Quality Control
     
 Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
 
-![Datavalidation](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidation.png)
+![Datavalidation1](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidationgreen.png)
+
+![Datavalidation2](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidationfhv.png)
 
 - For green and yellow taxi records: 
   
