@@ -45,19 +45,23 @@ It typically consists of staging, warehouse, and reporting layers, each serving 
 Data Quality Control 
 =========================== 
 
-1. Test table in dbt 
-    1) Test for staging tables 
-      For valid table, data is not null. 
+### Test table in dbt 
+  - Test for staging tables 
+    
+    1) For valid table, data is not null. 
       ![Test for staging tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_staging_table.png)
 
-    2) Test for warehouse tables 
-      For dim tables, primary key is unique and not null. 
+  - Test for warehouse tables 
+      
+    1) For dim tables, primary key is unique and not null. 
       ![Test for warehouse tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_dim_table.png)
 
-      For fact tables, the foreign key can be found in primary key. 
+      
+    2) For fact tables, the foreign key can be found in primary key. 
       ![Test for fact tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_fact_table.png)
 
-2. data cleaning 
+### Data cleaning 
+    
     Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
 
     Data cleaning rules for green taxt records: 
