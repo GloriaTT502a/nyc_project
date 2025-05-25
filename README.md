@@ -158,41 +158,67 @@ WorkFlow in Apache Airflow UI
 ==============================
 
 - The Whole Workflow
+![Workflow1](https://github.com/GloriaTT502a/nyc_project/blob/img/img/workflow1.png)
+
+- The Staging Workflow 
+![Workflow2](https://github.com/GloriaTT502a/nyc_project/blob/img/img/workflow_staging.png)
+
+- The Warehouse and Reporting Workflow 
+![Workflow3](https://github.com/GloriaTT502a/nyc_project/blob/img/img/workflow_warehouse_reporting.png)
 
 
+Problems in Development and Solutions 
+=====================================
+
+- Timeout Problem (Exit Status 127) 
+
+Solution: update airflow.cfg in docker scheduler container. 
+1) Install nano in docker container 
+    docker exec -u root -it nyc-project_d3e4e5-scheduler-1 bash 
+    apt-get update 
+    apt-get install -y nano
+
+2) Update airflow.cfg 
+    nano /usr/local/airflow/airflow.cfg
+    
+    Under [core], set: 
+    - lazy_load_plugins = True
+    - lazy_load_dags = True 
+    - lazy_load_plugins = True 
+    - parallelism = 1 
+    - max_active_tasks_per_dag = 1 
+    - dagbag_import_timeout = 60
+
+3) Restart astro environment 
+    astro dev restart 
 
 
+- Troubleshooting Version Incompatibilities 
 
+When using open-source software like Apache Airflow, dbt, and Astro, version incompatibility issues may arise, causing build failures or runtime errors. To resolve these: 
 
+Solution: 
 
-    Data cleaning rules for yellow taxt records: 
+1) Reinstall the Development Environment: 
 
-    1) yellow_warn_rules:
-        - name: pickup_datetime_future:
-          condition: "pickup_datetime <= current_timestamp()"
-          description: "Pickup datetime should not be in the future"
-        - name: invalid_fare_amount:
-          condition: "fare_amount >= 0"
-          description: "Fare amount should be non-negative"
-        - name: missing_passenger_count:
-          condition: "passenger_count IS NOT NULL"
-          description: "Passenger count should not be null"
-        - name: unusual_trip_distance:
-          condition: "trip_distance BETWEEN 0 AND 100"
-          description: "Trip distance should be within 0-100 miles"
+  - Stop and remove the existing Astro environment: 
 
-    2) yellow_drop_rules:
-        - name: null_pickup_datetime:
-          condition: "pickup_datetime IS NOT NULL"
-          description: "Pickup datetime must not be null"
-        - name: null_dropoff_datetime:
-          condition: "dropoff_datetime IS NOT NULL"
-          description: "Dropoff datetime must not be null"
-        - name: invalid_location:
-          condition: "pickup_longitude BETWEEN -74.3 AND -73.7 AND pickup_latitude BETWEEN 40.5 AND 41.0"
-          description: "Pickup location must be within NYC bounds"
-        - name: negative_total_amount:
-          condition: "total_amount > 0"
-          description: "Total amount must be positive"
+  astro dev stop
+  astro dev kill
 
-          
+  - Verify that All Containers are Removed  
+
+  docker ps -a 
+
+  - Clearn up Docker Resources 
+
+    docker system prune -a --volumes -f 
+
+  - Check System Memory 
+
+    free -m 
+
+  - Rebuild and Start the Astro Environment 
+
+    cd /path/of/the/project
+    astro dev start 
