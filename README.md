@@ -45,10 +45,10 @@ It typically consists of staging, warehouse, and reporting layers, each serving 
 Data Quality Control 
 =========================== 
 
-### Test table in dbt 
+### Test tables in dbt 
   - Test for staging tables 
     
-    1) For valid table, data is not null. 
+    1) For valid tables, data is not null. 
       ![Test for staging tables](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Test_staging_table.png)
 
   - Test for warehouse tables 
@@ -62,34 +62,42 @@ Data Quality Control
 
 ### Data cleaning 
     
-    Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
+Separate data as valid and invalid data according to data cleaning rules for green and yellow taxi records. 
 
-    Data cleaning rules for green taxt records: 
+![Datavalidation](https://github.com/GloriaTT502a/nyc_project/blob/img/img/Datavalidation.png)
+
+- For green and yellow taxi records: 
+  
+  The green and yellow taxi records with below conditions will be deleted from valid table: 
+
+    {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
+    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
+    {'name': 'fare_amount_negative', 'condition': 'fare_amount < 0'},
+    {'name': 'passenger_count_zero', 'condition': 'passenger_count = 0'},
+    {'name': 'trip_distance_negative', 'condition': 'trip_distance < 0'},
+    {'name': 'total_amount_negative', 'condition': 'total_amount < 0'}
+    {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'pickup_dropoff_invalid', 'condition': 'pickup_datetime > dropoff_datetime'},
+    {'name': 'fare_amount_null', 'condition': 'fare_amount IS NULL'},
+    {'name': 'total_amount_null', 'condition': 'total_amount IS NULL'}    
     
-    1) green_warn_rules:
-        - name: pickup_datetime_future
-          condition: "pickup_datetime <= current_timestamp()"
-          description: "Pickup datetime should not be in the future"
-        - name: invalid_fare_amount
-          condition: "fare_amount >= 0"
-          description: "Fare amount should be non-negative"
-        - name: missing_passenger_count
-          condition: "passenger_count IS NOT NULL"
-          description: "Passenger count should not be null"
-        - name: unusual_trip_distance
-          condition: "trip_distance BETWEEN 0 AND 100"
-          description: "Trip distance should be within 0-100 miles"
+- For fhv and fhvhv taxi records: 
+  
+  The fhv and fhvhv taxi records with below conditions will be deleted from valid table:  
 
-    2) green_drop_rules:
-        - name: null_pickup_datetime
-          condition: "pickup_datetime IS NOT NULL"
-          description: "Pickup datetime must not be null"
-        - name: null_dropoff_datetime
-          condition: "dropoff_datetime IS NOT NULL"
-          description: "Dropoff datetime must not be null"
-        - name: negative_total_amount
-          condition: "total_amount > 0"
-          description: "Total amount must be positive"                                
+    {'name': 'pickup_datetime_null', 'condition': 'pickup_datetime IS NULL'},
+    {'name': 'dropoff_datetime_null', 'condition': 'dropoff_datetime IS NULL'},
+    {'name': 'pickup_locationid_negative', 'condition': 'pickup_locationid < 0'},
+    {'name': 'dropoff_locationid_negative', 'condition': 'dropoff_locationid < 0'} 
+    {'name': 'pickup_datetime_invalid', 'condition': 'pickup_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'dropoff_datetime_invalid', 'condition': 'dropoff_datetime > CURRENT_TIMESTAMP()'},
+    {'name': 'pickup_dropoff_invalid', 'condition': 'pickup_datetime > dropoff_datetime'} 
+
+
+
+
+
 
 
     Data cleaning rules for yellow taxt records: 
