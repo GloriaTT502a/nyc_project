@@ -170,7 +170,7 @@ WorkFlow in Apache Airflow UI
 Problems in Development and Solutions 
 =====================================
 
-- Timeout Problem (Exit Status 127) 
+### Timeout Problem (Exit Status 127) 
 
 Solution: update airflow.cfg in docker scheduler container. 
 1) Install nano in docker container 
@@ -193,7 +193,7 @@ Solution: update airflow.cfg in docker scheduler container.
     astro dev restart 
 
 
-- Troubleshooting Version Incompatibilities 
+### Troubleshooting Version Incompatibilities 
 
 When using open-source software like Apache Airflow, dbt, and Astro, version incompatibility issues may arise, causing build failures or runtime errors. To resolve these: 
 
@@ -203,12 +203,12 @@ Solution:
 
   - Stop and remove the existing Astro environment: 
 
-  astro dev stop
-  astro dev kill
+    astro dev stop
+    astro dev kill
 
   - Verify that All Containers are Removed  
 
-  docker ps -a 
+    docker ps -a 
 
   - Clearn up Docker Resources 
 
@@ -222,3 +222,30 @@ Solution:
 
     cd /path/of/the/project
     astro dev start 
+
+
+Power BI 
+=========
+The Power BI reports were developed by referencing [https://app.powerbigov.us/view?r=eyJrIjoiY2FlNjI3YWQtMDkzOS00MjliLTk0MTQtODc2NzU4OTYwNjFiIiwidCI6IjMyZjU2ZmM3LTVmODEtNGUyMi1hOTViLTE1ZGE2NjUxM2JlZiJ9&pageName=ReportSection28c004ce23fc37acd783]. 
+
+![PowerBI1](https://github.com/GloriaTT502a/nyc_project/blob/img/img/PowerBI.png) 
+
+
+Data Model in PowerBI
+======================
+![PowerBI2](https://github.com/GloriaTT502a/nyc_project/blob/img/img/PowerBI_datamodels.png)
+
+
+
+
+
+To-Do List
+===============
+
+The following tasks are planned to enhance the project:
+
+- Merge Only New Records: Implement a merge operation to insert only records that do not already exist in the target tables, preventing duplicates.
+
+- Rerun Incremental dbt Models: Execute incremental SQL models in dbt to update data efficiently, reducing processing time for large datasets.
+
+- Enhance Reporting Table Tests: Improve dbt tests for the reporting layer to ensure data accuracy, consistency, and performance, as detailed in the Data Quality Control section.
