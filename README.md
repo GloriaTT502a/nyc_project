@@ -1,4 +1,4 @@
-NYC Taxi Data Warehouse Project
+New York City Taxi Data Warehouse Project
 ========
 
 Overview
