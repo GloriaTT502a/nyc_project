@@ -249,3 +249,7 @@ The following tasks are planned to enhance the project:
 - Rerun Incremental dbt Models: Execute incremental SQL models in dbt to update data efficiently, reducing processing time for large datasets.
 
 - Enhance Reporting Table Tests: Improve dbt tests for the reporting layer to ensure data accuracy, consistency, and performance, as detailed in the Data Quality Control section.
+
+- Get more records about driving details to analyze driving records to detect drowsy driving 
+
+- Analyse payment records to find out fair pay benchmarks
